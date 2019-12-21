@@ -48,4 +48,5 @@ def handle_message(event):
 if __name__ == "__main__":
 #    app.run()
     port = int(os.getenv("PORT", 5000))
+    print(YOUR_CHANNEL_ACCESS_TOKEN)
     app.run(host="0.0.0.0", port=port)
