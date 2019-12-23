@@ -1,13 +1,21 @@
 import requests
+import base64
 
+API_KEY = 'dmsZI8tMsBoceJI3hx_nPN6qy6hvM6Oq'
+API_SECRET = 'RyrwmZXueUjmBv79W1SlI61M3v9CqUU1'
 def face_detect(image):
    url = "https://api-us.faceplusplus.com/facepp/v3/detect"
-   payload = {'api_key': 'dmsZI8tMsBoceJI3hx_nPN6qy6hvM6Oq', 'api_secret': 'RyrwmZXueUjmBv79W1SlI61M3v9CqUU1HideRyrwmZXueUjmBv79W1SlI61M3v9CqUU1Hide',\
-              'image_base64': image, 'return_attributes': 'gender,age,ethnicity,beauty'}
+   config = {'api_key':API_KEY,     # API Key
+          'api_secret':API_SECRET,      # API Secret
+          'image_base64':image,      # 画像データ
+          'return_landmark':1,          # landmark設定
+		  'return_attributes':'gender,age,smiling,headpose,facequality,blur,eyestatus,emotion,ethnicity,beauty,mouthstatus,eyegaze,skinstatus'# 特徴分析
+} 
    try:
-       r = requests.post(url, data=payload)
+       r = requests.post(url, data=config)
        r = r.json()
        face_list = []
+       print(r)
        for face in r["faces"]:
            faces = {}
            if "attributes" in face:
@@ -39,4 +47,6 @@ def face_detect(image):
            msg = "画像から顔データを検出できませんでした。"
        return msg
    except:
+       import traceback
+       traceback.print_exc()
        return "サーバーの接続に失敗したか画像を正しく認識できませんでした。"
