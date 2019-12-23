@@ -15,7 +15,6 @@ def face_detect(image):
        r = requests.post(url, data=config)
        r = r.json()
        face_list = []
-       print(r)
        for face in r["faces"]:
            faces = {}
            if "attributes" in face:
