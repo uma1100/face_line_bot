@@ -3,18 +3,35 @@ import base64
 
 API_KEY = 'dmsZI8tMsBoceJI3hx_nPN6qy6hvM6Oq'
 API_SECRET = 'RyrwmZXueUjmBv79W1SlI61M3v9CqUU1'
+
+def test(image):
+    url = "https://apius.faceplusplus.com/facepp/v3/detect"
+    config = {
+            'api_key':API_KEY,     # API Key
+            'api_secret':API_SECRET,      # API Secret
+            'image_base64':image,      # 画像データ
+            'return_landmark':1,          # landmark設定
+            'return_attributes':'gender,age,smiling,headpose,facequality,blur,eyestatus,emotion,ethnicity,beauty,mouthstatus,eyegaze,skinstatus'# 特徴分析
+        }
+    r = requests.post(url, data=config)
+    print(r)
+    return 0
+
 def face_detect(image):
-   url = "https://api-us.faceplusplus.com/facepp/v3/detect"
-   config = {'api_key':API_KEY,     # API Key
-          'api_secret':API_SECRET,      # API Secret
-          'image_base64':image,      # 画像データ
-          'return_landmark':1,          # landmark設定
-		  'return_attributes':'gender,age,smiling,headpose,facequality,blur,eyestatus,emotion,ethnicity,beauty,mouthstatus,eyegaze,skinstatus'# 特徴分析
-} 
+   url = "https://apius.faceplusplus.com/facepp/v3/detect"
+   config = {
+        'api_key':API_KEY,     # API Key
+        'api_secret':API_SECRET,      # API Secret
+        'image_base64':image,      # 画像データ
+        'return_landmark':1,          # landmark設定
+        'return_attributes':'gender,age,smiling,headpose,facequality,blur,eyestatus,emotion,ethnicity,beauty,mouthstatus,eyegaze,skinstatus'# 特徴分析
+    }
    try:
        r = requests.post(url, data=config)
+       print(r)
        r = r.json()
        face_list = []
+       print(r)
        for face in r["faces"]:
            faces = {}
            if "attributes" in face:
@@ -49,3 +66,13 @@ def face_detect(image):
        import traceback
        traceback.print_exc()
        return "サーバーの接続に失敗したか画像を正しく認識できませんでした。"
+
+if __name__ == '__main__':
+    # 識別したい画像を取得
+    f = open('joy.jpg', 'rb') 
+    img = f.read()
+    f.close() 
+    img = base64.b64encode(img)
+    # print(img)
+    data = test(img)
+    # print(data)

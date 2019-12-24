@@ -1,7 +1,7 @@
 from flask import Flask, request, abort
 import os
 
-import face_detect as f  # face_detect.py
+import face_pp as f  # face_pp.py
 import base64
 
 from linebot import (
@@ -60,7 +60,7 @@ def handle_image_message(event):
    for chunk in message_content.iter_content(): 
        push_img += chunk #画像をiter_contentでpush_imgに順次代入
    push_img = base64.b64encode(push_img) # APIに通すためbase64エンコード
-   msg = f.face_detect(push_img)
+   msg = f.search_image(push_img)
    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=msg))
 
 if __name__ == "__main__":
