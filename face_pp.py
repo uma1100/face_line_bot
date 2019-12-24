@@ -89,27 +89,27 @@ def detect_image(img):
 
 # 顔を識別するAPI
 def search_image(img):
-    endpoint = 'https://api-us.faceplusplus.com'
-    # img_base64 = base64.b64encode(img)
-    # 顔検出APIにリクエストを送る
-    faces=detect_image(img)
-    face_list = []
-    for face in faces["faces"]:
-        faces_data = {}
-        try:
+    try:
+        endpoint = 'https://api-us.faceplusplus.com'
+        # img_base64 = base64.b64encode(img)
+        # 顔検出APIにリクエストを送る
+        faces=detect_image(img)
+        face_list = []
+        for face in faces["faces"]:
+            faces_data = {}
             if "attributes" in face:
-               faces_data["gender"] = face["attributes"]["gender"]["value"]
-               faces_data["age"] = face["attributes"]["age"]["value"]
-               # 人種を取得したい場合は以下の記述を追加する
-               # faces_data["ethnicity"] = face["attributes"]["ethnicity"]["value"]
-               # faces_data["ethnicity"] = faces_data["ethnicity"].replace("ASIAN", "アジア人").replace("WHITE", "白人").replace("BLACK", "黒人")
-               if faces_data["gender"] == "Male":
-                   faces_data["beauty"] = face["attributes"]["beauty"]["male_score"]
-                   faces_data["gender"] = "男性"
-               else:
-                   faces_data["beauty"] = face["attributes"]["beauty"]["female_score"]
-                   faces_data["gender"] = "女性"
-               faces_data["x_axis"] = face["face_rectangle"]["left"] # 並び替え用に画像上の顔のX座標の位置を代入
+                faces_data["gender"] = face["attributes"]["gender"]["value"]
+                faces_data["age"] = face["attributes"]["age"]["value"]
+                # 人種を取得したい場合は以下の記述を追加する
+                # faces_data["ethnicity"] = face["attributes"]["ethnicity"]["value"]
+                # faces_data["ethnicity"] = faces_data["ethnicity"].replace("ASIAN", "アジア人").replace("WHITE", "白人").replace("BLACK", "黒人")
+            if faces_data["gender"] == "Male":
+                faces_data["beauty"] = face["attributes"]["beauty"]["male_score"]
+                faces_data["gender"] = "男性"
+            else:
+                faces_data["beauty"] = face["attributes"]["beauty"]["female_score"]
+                faces_data["gender"] = "女性"
+            faces_data["x_axis"] = face["face_rectangle"]["left"] # 並び替え用に画像上の顔のX座標の位置を代入
 
             # 類似度検索
             response = requests.post(
@@ -131,28 +131,27 @@ def search_image(img):
             faces_data['confidence'] = similar_data['results'][0]['confidence']
             faces_data['similar'] = get_face_type(similar_data['results'][0]['user_id'])
             face_list.append(faces_data)
-            # img=draw_img(face,resources,img)
-        except Exception as e:
-            print(e)
-            return -1
-    face_list = sorted(face_list, key=lambda x:x["x_axis"]) # 左から順に並び変える
-    msg = ""
-    for i, f in enumerate(face_list, 1):
-        msg += "{}人目の情報\n".format(i)
-        # msg += "X軸の位置:{} \n".format(face["x_axis"]) デバッグ用
-        msg += "性別: {}\n".format(f["gender"])
-        msg += "年齢: {}歳\n".format(f["age"])
-        # 人種を取得したい場合は以下の記述を追加する
-        # msg += "人種: {}\n".format(f["ethnicity"])
-        msg += "偏差値: {}\n".format(int(f["beauty"]))
-        if not f['similar'] == -1:
-            msg += "{}に{}%似ています\n\n".format(f['similar'],round(f["confidence"],1))
-        else:
-            msg += "似ている有名人を発見することができませんでした。\n\n"
-    msg = msg.rstrip()
-    if not msg:
-        msg = "画像から顔データを検出できませんでした。"
-    return msg
+        face_list = sorted(face_list, key=lambda x:x["x_axis"]) # 左から順に並び変える
+        msg = ""
+        for i, f in enumerate(face_list, 1):
+            msg += "{}人目の情報\n".format(i)
+            # msg += "X軸の位置:{} \n".format(face["x_axis"]) デバッグ用
+            msg += "性別: {}\n".format(f["gender"])
+            msg += "年齢: {}歳\n".format(f["age"])
+            # 人種を取得したい場合は以下の記述を追加する
+            # msg += "人種: {}\n".format(f["ethnicity"])
+            msg += "偏差値: {}\n".format(int(f["beauty"]))
+            if not f['similar'] == -1:
+                msg += "{}に{}%似ています\n\n".format(f['similar'],round(f["confidence"],1))
+            else:
+                msg += "似ている有名人を発見することができませんでした。\n\n"
+        msg = msg.rstrip()
+        if not msg:
+            msg = "画像から顔データを検出できませんでした。"
+        return msg
+    except:
+       return "サーバーの接続に失敗したか画像を正しく認識できませんでした。"
+
 
 # 比較する顔画像を登録
 def create_faceset(face_list,tags):
@@ -221,19 +220,20 @@ def set_userid(face_token,user):
 
 
 # ----- test code -----
-# if __name__ == '__main__':
-#     # 識別したい画像を取得
-#     f = open('./test_photo/test3_mult.jpeg', 'rb') 
-#     img = f.read()
-#     f.close() 
-#     img = base64.b64encode(img)
-#     # img=cv2.imread('./input/'+filename)
+
+if __name__ == '__main__':
+    # 識別したい画像を取得
+    f = open('./test_photo/test3_mult.jpeg', 'rb') 
+    img = f.read()
+    f.close() 
+    img = base64.b64encode(img)
+    # img=cv2.imread('./input/'+filename)
     
-#     # --- 顔検出 ---
-#     # 識別するAPIにリクエストを送る
-#     resources = search_image(img)
-#     print('-----------')
-#     print(resources)
+    # --- 顔検出 ---
+    # 識別するAPIにリクエストを送る
+    resources = search_image(img)
+    print('-----------')
+    print(resources)
 
 
     # --- 顔登録 ---
