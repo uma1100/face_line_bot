@@ -53,10 +53,10 @@ def handle_image_message(event):
    sample_data = FlexSendMessage.new_from_json_dict(payload_data.payload)
    push_img_id = event.message.id # 投稿された画像IDを取得
    message_content = line_bot_api.get_message_content(push_img_id) # LINEサーバー上に自動保存された画像を取得
+   print(message_content)
    push_img = b""
    for chunk in message_content.iter_content():
        push_img += chunk #画像をiter_contentでpush_imgに順次代入
-   print(push_img)
    push_img = base64.b64encode(push_img) # APIに通すためbase64エンコード
    msg = f.search_image(push_img)
    line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=msg),sample_data])
