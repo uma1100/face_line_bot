@@ -32,20 +32,6 @@ payload = {
           "align": "center"
         }
       ]
-    },
-    "footer": {
-      "type": "box",
-      "layout": "horizontal",
-      "contents": [
-        {
-          "type": "button",
-          "action": {
-            "type": "uri",
-            "label": "作成者の情報",
-            "uri": "https://www.mozzz.work/"
-          }
-        }
-      ]
     }
   }
 }

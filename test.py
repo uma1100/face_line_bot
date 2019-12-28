@@ -7,7 +7,7 @@ API_SECRET = 'RyrwmZXueUjmBv79W1SlI61M3v9CqUU1'
 
 # 画像ファイルをbase64バイナリ形式で読み出します
 # file_pathは画像ファイル（jpgなど）
-f = open('./joy.jpg','rb')
+f = open('./joy.jpg','wb')
 
 image = base64.encodebytes(f.read())
 
@@ -20,6 +20,7 @@ config = {
         }        
 # リクエストURLの設定  
 url = 'https://api-us.faceplusplus.com/facepp/v3/detect'
+
     
 # POSTリクエスト
 res = requests.post(url, data=config)
