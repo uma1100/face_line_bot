@@ -22,6 +22,23 @@ def get_face_type(user_id):
         return "菅田将暉"
     else:
         return -1
+def get_emo_type(emotion):
+    if emotion == 'surprise':
+        return '驚いている😲'
+    elif emotion == 'anger':
+        return '怒っている👿'
+    elif emotion == 'disgust':
+        return '嫌な顔をしています😅'
+    elif emotion == 'fear':
+        return '恐れています😨'
+    elif emotion == 'happiness':
+        return '幸せが溢れています😘'
+    elif emotion == 'neutral':
+        return '自然体です😁'
+    elif emotion == 'sadness':
+        return '悲しんでいます😂'
+    else:
+        return '読み取れませんでした。'
 
 def face_detect(image):
    url = "https://api-us.faceplusplus.com/facepp/v3/detect"
@@ -52,7 +69,7 @@ def face_detect(image):
                faces["x_axis"] = face["face_rectangle"]["left"] # 並び替え用に画像上の顔のX座標の位置を代入
                face_list.append(faces)
        face_list = sorted(face_list, key=lambda x:x["x_axis"]) # 左から順に並び変える
-       msg = "左から"
+       msg = ""
        for i, f in enumerate(face_list, 1):
            msg += "{}人目の情報\n".format(i)
            # msg += "X軸の位置:{} \n".format(face["x_axis"]) デバッグ用
@@ -61,9 +78,7 @@ def face_detect(image):
            # 人種を取得したい場合は以下の記述を追加する
            # msg += "人種: {}\n".format(f["ethnicity"])
            msg += "偏差値: {}\n".format(int(f["beauty"]))
-           msg += "感情： {}\n".format(f["emotion"])
        msg = msg.rstrip()
-       print(msg)
        if not msg:
            msg = "画像から顔データを検出できませんでした。"
        return msg
@@ -113,6 +128,7 @@ def search_image(img):
                 faces_data["beauty"] = face["attributes"]["beauty"]["female_score"]
                 faces_data["gender"] = "女性"
             faces_data["x_axis"] = face["face_rectangle"]["left"] # 並び替え用に画像上の顔のX座標の位置を代入
+            faces_data["emotion"] = get_emo_type(max(face['attributes']['emotion'], key=face['attributes']['emotion'].get))
 
             # 類似度検索
             response = requests.post(
@@ -135,7 +151,7 @@ def search_image(img):
             faces_data['similar'] = get_face_type(similar_data['results'][0]['user_id'])
             face_list.append(faces_data)
         face_list = sorted(face_list, key=lambda x:x["x_axis"]) # 左から順に並び変える
-        msg = ""
+        msg = "左から"
         for i, f in enumerate(face_list, 1):
             msg += "{}人目の情報\n".format(i)
             # msg += "X軸の位置:{} \n".format(face["x_axis"]) デバッグ用
@@ -144,6 +160,7 @@ def search_image(img):
             # 人種を取得したい場合は以下の記述を追加する
             # msg += "人種: {}\n".format(f["ethnicity"])
             msg += "偏差値: {}\n".format(int(f["beauty"]))
+            msg += "感情： {}\n".format(f["emotion"])
             if not f['similar'] == -1:
                 msg += "{}に{}%似ています\n\n".format(f['similar'],round(f["confidence"],1))
             else:
@@ -152,8 +169,9 @@ def search_image(img):
         if not msg:
             msg = "画像から顔データを検出できませんでした。"
         return msg
-    except:
-       return "サーバーの接続に失敗したか画像を正しく認識できませんでした。"
+    except Exception as e:
+        print(e)
+        return "サーバーの接続に失敗したか画像を正しく認識できませんでした。"
 
 
 # 比較する顔画像を登録

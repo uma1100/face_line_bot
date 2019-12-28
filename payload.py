@@ -41,7 +41,7 @@ payload = {
           "type": "button",
           "action": {
             "type": "uri",
-            "label": "作成者",
+            "label": "作成者の情報",
             "uri": "https://www.mozzz.work/"
           }
         }
