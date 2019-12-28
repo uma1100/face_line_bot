@@ -26,11 +26,12 @@ def hello_world():
 @app.route("/callback", methods=['POST'])
 def callback():
    # get X-Line-Signature header value
-   print(request.headers['X-Line-Signature'])
+#    print(request.headers['X-Line-Signature'])
    signature = request.headers['X-Line-Signature']
 
    # get request body as text
    body = request.get_data(as_text=True)
+   print(body)
    app.logger.info("Request body: " + body)
 
    # handle webhook body
