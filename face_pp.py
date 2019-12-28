@@ -51,9 +51,9 @@ def face_detect(image):
                faces["x_axis"] = face["face_rectangle"]["left"] # 並び替え用に画像上の顔のX座標の位置を代入
                face_list.append(faces)
        face_list = sorted(face_list, key=lambda x:x["x_axis"]) # 左から順に並び変える
-       msg = ""
+       msg = "左から"
        for i, f in enumerate(face_list, 1):
-           msg += "左から{}人目の情報\n".format(i)
+           msg += "{}人目の情報\n".format(i)
            # msg += "X軸の位置:{} \n".format(face["x_axis"]) デバッグ用
            msg += "性別: {}\n".format(f["gender"])
            msg += "年齢: {}歳\n".format(f["age"])
