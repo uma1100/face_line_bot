@@ -223,7 +223,7 @@ def set_userid(face_token,user):
 
 if __name__ == '__main__':
     # 識別したい画像を取得
-    f = open('./test_photo/test3_mult.jpeg', 'rb') 
+    f = open('./test_data/test3_mult.jpeg', 'rb') 
     img = f.read()
     f.close() 
     img = base64.b64encode(img)
