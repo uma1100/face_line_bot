@@ -51,7 +51,7 @@ def callback():
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image_message(event):
    loading_data = FlexSendMessage.new_from_json_dict(payload_data.payload)
-   line_bot_api.push_message(event.reply_token, messages=loading_data)
+   line_bot_api.reply_message(event.reply_token, messages=loading_data)
    push_img_id = event.message.id # 投稿された画像IDを取得
    message_content = line_bot_api.get_message_content(push_img_id) # LINEサーバー上に自動保存された画像を取得
    push_img = b""
