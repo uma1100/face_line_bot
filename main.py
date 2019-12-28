@@ -56,9 +56,9 @@ def handle_image_message(event):
    push_img = b""
    for chunk in message_content.iter_content():
        push_img += chunk #画像をiter_contentでpush_imgに順次代入
+   print(push_img)
    push_img = base64.b64encode(push_img) # APIに通すためbase64エンコード
    msg = f.search_image(push_img)
-   print(msg)
    line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=msg),sample_data])
 
 if __name__ == "__main__":
