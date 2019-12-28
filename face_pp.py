@@ -53,13 +53,14 @@ def face_detect(image):
        face_list = sorted(face_list, key=lambda x:x["x_axis"]) # 左から順に並び変える
        msg = ""
        for i, f in enumerate(face_list, 1):
-           msg += "{}人目の情報\n".format(i)
+           msg += "左から{}人目の情報\n".format(i)
            # msg += "X軸の位置:{} \n".format(face["x_axis"]) デバッグ用
            msg += "性別: {}\n".format(f["gender"])
            msg += "年齢: {}歳\n".format(f["age"])
            # 人種を取得したい場合は以下の記述を追加する
            # msg += "人種: {}\n".format(f["ethnicity"])
-           msg += "偏差値: {}\n\n".format(int(f["beauty"]))
+           msg += "偏差値: {}\n".format(int(f["beauty"]))
+           msg += "感情： {}\n".format(f["emotion"])
        msg = msg.rstrip()
        if not msg:
            msg = "画像から顔データを検出できませんでした。"
