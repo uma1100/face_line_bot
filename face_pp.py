@@ -63,6 +63,7 @@ def face_detect(image):
            msg += "偏差値: {}\n".format(int(f["beauty"]))
            msg += "感情： {}\n".format(f["emotion"])
        msg = msg.rstrip()
+       print(msg)
        if not msg:
            msg = "画像から顔データを検出できませんでした。"
        return msg
