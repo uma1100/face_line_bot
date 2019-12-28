@@ -4,9 +4,10 @@ import base64
 
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageMessage #ImageMessageを追加
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageMessage, FlexSendMessage #ImageMessageを追加
 
 import face_pp as f  # face_pp.py
+import payload as payload_data
 
 
 app = Flask(__name__)
@@ -31,7 +32,6 @@ def callback():
 
    # get request body as text
    body = request.get_data(as_text=True)
-   print(body)
    app.logger.info("Request body: " + body)
 
    # handle webhook body
@@ -50,6 +50,8 @@ def callback():
 
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image_message(event):
+   loading_data = FlexSendMessage.new_from_json_dict(payload_data.payload)
+   line_bot_api.push_message(event.reply_token, messages=loading_data)
    push_img_id = event.message.id # 投稿された画像IDを取得
    message_content = line_bot_api.get_message_content(push_img_id) # LINEサーバー上に自動保存された画像を取得
    push_img = b""
@@ -57,8 +59,6 @@ def handle_image_message(event):
        push_img += chunk #画像をiter_contentでpush_imgに順次代入
    push_img = base64.b64encode(push_img) # APIに通すためbase64エンコード
    msg = f.search_image(push_img)
-   print("---")
-   print(msg)
    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=msg))
 
 if __name__ == "__main__":
