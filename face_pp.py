@@ -140,10 +140,11 @@ def search_image(img):
                 if response.status_code != 200:
                     return -1
                 similar_data_json = response.json()
-                similar_data[similar_data_json['results'][0]['user_id']] = [similar_data_json['results'][0]['confidence']]
+                similar_data[similar_data_json['results'][0]['user_id']] = similar_data_json['results'][0]['confidence']
 
-            faces_data['confidence'] = max(similar_data.values())[0]
-            faces_data['similar'] = get_face_type(max(similar_data))
+            # print(similar_data)
+            faces_data['confidence'] = max(similar_data.values())
+            faces_data['similar'] = get_face_type(max(similar_data, key=similar_data.get))
             face_list.append(faces_data)
         face_list = sorted(face_list, key=lambda x:x["x_axis"]) # 左から順に並び変える
         msg = "左から"
@@ -239,7 +240,7 @@ def set_userid(face_token,user):
 
 if __name__ == '__main__':
     # 識別したい画像を取得
-    f = open('./test_data/test3_mult.jpeg', 'rb') 
+    f = open('./test_data/test3.jpg', 'rb') 
     img = f.read()
     f.close() 
     img = base64.b64encode(img)
