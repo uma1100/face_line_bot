@@ -6,22 +6,13 @@ import time
 
 API_KEY = 'dmsZI8tMsBoceJI3hx_nPN6qy6hvM6Oq'
 API_SECRET = 'RyrwmZXueUjmBv79W1SlI61M3v9CqUU1'
-FACESET_TOKEN = '790e55c1290041abc8ce16a07fa33f82'
+FACESET_TOKENS = ['790e55c1290041abc8ce16a07fa33f82','a0305f1f27eea076fe060c6b5215ae51']
 ATTRIBUTES = 'gender,age,smiling,headpose,facequality,blur,eyestatus,emotion,ethnicity,beauty,mouthstatus,eyegaze,skinstatus'
+FACE_LIST = {'hirano':'平野綾','kanna':'橋本環奈','yonezu':'米津玄師','suda':'菅田将暉','ashida':"芦田愛菜",'nakayama':"なかやまきんに君",'zako':"ハリウッドザコシショウ"}
 
 def get_face_type(user_id):
-    if user_id == 'hirano':
-        return '平野綾'
-    elif user_id == 'joy':
-        return "JOY"
-    elif user_id == 'kanna':
-        return '橋本環奈'
-    elif user_id == 'yonezu':
-        return "米津玄師"
-    elif user_id == 'suda':
-        return "菅田将暉"
-    else:
-        return -1
+    return FACE_LIST.get(user_id)
+
 def get_emo_type(emotion):
     if emotion == 'surprise':
         return '驚いている😲'
@@ -131,24 +122,28 @@ def search_image(img):
             faces_data["emotion"] = get_emo_type(max(face['attributes']['emotion'], key=face['attributes']['emotion'].get))
 
             # 類似度検索
-            response = requests.post(
-                endpoint + '/facepp/v3/search',
-                {
-                    'api_key': API_KEY,
-                    'api_secret': API_SECRET,
-                    'face_token': str(face["face_token"]),
-                    'faceset_token': FACESET_TOKEN,
-                    'return_result_count': 1,
-                }
-            )
-            # 1秒スリープ
-            time.sleep(1)
-            # レスポンスのステータスコードが200以外の場合
-            if response.status_code != 200:
-                return -1
-            similar_data = response.json()
-            faces_data['confidence'] = similar_data['results'][0]['confidence']
-            faces_data['similar'] = get_face_type(similar_data['results'][0]['user_id'])
+            similar_data = {}
+            for FACESET_TOKEN in FACESET_TOKENS:
+                response = requests.post(
+                    endpoint + '/facepp/v3/search',
+                    {
+                        'api_key': API_KEY,
+                        'api_secret': API_SECRET,
+                        'face_token': str(face["face_token"]),
+                        'faceset_token': FACESET_TOKEN,
+                        'return_result_count': 1,
+                    }
+                )
+                # 1秒スリープ
+                time.sleep(1)
+                # レスポンスのステータスコードが200以外の場合
+                if response.status_code != 200:
+                    return -1
+                similar_data_json = response.json()
+                similar_data[similar_data_json['results'][0]['user_id']] = [similar_data_json['results'][0]['confidence']]
+
+            faces_data['confidence'] = max(similar_data.values())[0]
+            faces_data['similar'] = get_face_type(max(similar_data))
             face_list.append(faces_data)
         face_list = sorted(face_list, key=lambda x:x["x_axis"]) # 左から順に並び変える
         msg = "左から"

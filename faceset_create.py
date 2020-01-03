@@ -84,7 +84,6 @@ def set_userid(face_token,user):
         if response.status_code != 200:
             return -1
         resources = response.json()
-        print(resources)
         return resources
     except Exception as e:
         print(e)
@@ -92,9 +91,10 @@ def set_userid(face_token,user):
 
 if __name__ == '__main__':
     # フォルダ内の画像を取得
-    face_list = glob.glob('./facebank/*')
+    face_list = glob.glob('./facebank2/*')
     face_list.sort()
     # 各名前(user_id)登録
     tags = [str(face_path).split("/")[2].split(".")[0] for face_path in face_list]
+    print(face_list)
     face_set = create_faceset(face_list,tags)
     print(face_set['faceset_token'])
